@@ -90,4 +90,9 @@ public class LocalizationWatcher
 		//_ = localizationManager.LoadLocalization(filePathName);
 		Timers.SetTimeout(() => _ = localizationManager.LoadLocalization(filePathName), 250);
 	}
+
+	public override string ToString()
+	{
+		return JsonManager.Serialize(this);
+	}
 }

@@ -31,7 +31,7 @@ namespace MHWTeaOverlay
 		public Dictionary<string, string> ImGui { get; set; } = new();
 
 		public Localization() {
-			InitializeDefaultValues();
+			DefaultLocalization.Initialize(this);
 		}
 
 		public async Task<Localization> Init()
@@ -64,18 +64,6 @@ namespace MHWTeaOverlay
 
 			return this;
 		}
-
-		private void InitializeDefaultValues()
-		{
-			UI["test"] = "1";
-			UI["test2"] = "2";
-			UI["test3"] = "3";
-
-			ImGui["test4"] = "4";
-			ImGui["test5"] = "5";
-			ImGui["test6"] = "6";
-		}
-
 
 		public void RemoveExtraProperties()
 		{
