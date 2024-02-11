@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace MHWTeaOverlay;
+
+public enum OutlineModes { Outside, Center, Inside }
+
+public enum FillDirections { LeftToRight, RightToLeft, TopToBottom, BottomToTop }
+
+public static class Constants
+{
+	public const float EPSILON = 0.000001f;
+
+	public const string PLUGIN_PATH = @"nativePC\plugins\CSharp\MHWTeaOverlay\";
+	public const string PLUGIN_DATA_PATH = PLUGIN_PATH + @"data\";
+	public const string LOCALES_PATH = PLUGIN_DATA_PATH + @"locales\";
+	public const string CONFIGS_PATH = PLUGIN_DATA_PATH + @"configs\";
+	public const string FONTS_PATH = PLUGIN_DATA_PATH + @"fonts\";
+
+	public const string CONFIG_FILE_PATH_NAME = PLUGIN_DATA_PATH + "config.json";
+}
