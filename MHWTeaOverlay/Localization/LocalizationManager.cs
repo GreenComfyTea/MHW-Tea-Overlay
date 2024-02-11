@@ -1,9 +1,12 @@
-﻿using ImGuiNET;
+﻿using ABI.System;
+using ImGuiNET;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Exception = System.Exception;
 
 namespace MHWTeaOverlay;
 
@@ -14,62 +17,107 @@ public class LocalizationManager
 
 	public static LocalizationManager Instance { get { return singleton; } }
 
-
 	// Explicit static constructor to tell C# compiler
 	// not to mark type as beforefieldinit
 	static LocalizationManager() {}
 
 	// Singleton Pattern End
 
-	public Dictionary<string, Locale> Locales { get; set; } = new();
+	public Dictionary<string, Localization> Localizations { get; set; } = new();
 
-	public Locale Default { get; set; }
+	public Localization Default { get; set; }
 	
-	public Locale Current { get; set; }
+	public Localization Current { get; set; }
+
+	private LocalizationWatcher LocalizationWatcherInstance { get; set; }
 
 
-	private LocalizationManager()
+	private LocalizationManager() { }
+
+	public async void Init()
 	{
-		Default = new Locale();
+		TeaLog.Info("LocalizationManager: Initializing...");
 
+		Default = await new Localization().Init();
 		Current = Default;
 
-		Init();
+		await LoadAllLocalizations();
+
+		LocalizationWatcherInstance = new LocalizationWatcher();
+
+		TeaLog.Info("LocalizationManager: Done!");
 	}
 
-	public void Init()
+	public async Task LoadAllLocalizations()
 	{
 
-		LoadAllLocales();
-	}
+		TeaLog.Info("LocalizationManager: Loading All Localizations...");
 
-	public void LoadAllLocales()
-	{
-
-		TeaLog.Info("Loading All Locales...");
-
-		Locales = new();
-		Locales[Default.LocaleName] = Default;
+		Localizations = new();
+		Localizations[Default.Name] = Default;
 
 
-		foreach (var localeFileNamePath in Directory.EnumerateFiles(Constants.LOCALES_PATH, "*.json"))
+		foreach (var localalizationFileNamePath in Directory.EnumerateFiles(Constants.LOCALIZATIONS_PATH, "*.json"))
 		{
-			var localeName = Path.GetFileNameWithoutExtension(localeFileNamePath);
-
-			if (localeName.Equals(Default.LocaleName)) continue;
-
-			TeaLog.Info($"Locale {localeName}: Loading...");
-
-			var json = JsonManager.ReadJsonFromFile(localeFileNamePath);
-			Locales[localeName] = new Locale(localeName, json);
+			await LoadLocalization(localalizationFileNamePath);
 		}
 	}
 
-	public string Get(string key)
+	public async Task LoadLocalization(string localizationFileNamePath)
 	{
-		var currentSuccess = Current.TryGetLocalizedString(key, out string currentLocalizedString);
-		if (currentSuccess) return currentLocalizedString;
+		try
+		{
+			var localizationName = Path.GetFileNameWithoutExtension(localizationFileNamePath);
+
+			if (localizationName.Equals(Default.Name)) return;
+
+			TeaLog.Info($"Localization {localizationName}: Loading...");
+
+			var json = await JsonManager.ReadFromFile(localizationFileNamePath);
+
+			var localization = await JsonSerializer.Deserialize<Localization>(json, JsonManager.JsonSerializerOptionsInstance).Init(localizationName);
+
+			Localizations[localizationName] = localization;
+
+			if(localizationName.Equals(Current))
+			{
+				Current = localization;
+			}
+		}
+		catch(Exception exception)
+		{
+			TeaLog.Info(exception.ToString());
+		}
+	}
+
+	public string UI(string key)
+	{
+		string localizedString;
+		
+		var currentSuccess = Current.UI.TryGetValue(key, out localizedString);
+		if (currentSuccess) return localizedString;
+
+		var defaultSuccess = Default.UI.TryGetValue(key, out localizedString);
+		if (defaultSuccess) return localizedString;
 
 		return key;
+	}
+
+	public string ImGui(string key)
+	{
+		string localizedString;
+
+		var currentSuccess = Current.ImGui.TryGetValue(key, out localizedString);
+		if (currentSuccess) return localizedString;
+
+		var defaultSuccess = Default.ImGui.TryGetValue(key, out localizedString);
+		if (defaultSuccess) return localizedString;
+
+		return key;
+	}
+
+	public override string ToString()
+	{
+		return JsonManager.Serialize(this);
 	}
 }

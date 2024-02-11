@@ -1,6 +1,8 @@
 ﻿using SharpPluginLoader.Core;
 using ImGuiNET;
 using System.Diagnostics;
+using System.ComponentModel.DataAnnotations;
+using System.Net.WebSockets;
 
 namespace MHWTeaOverlay;
 
@@ -26,12 +28,12 @@ public class MHWTeaOverlayPlugin : IPlugin
 			TeaLog.Info("Plugin Loaded!");
 
 			var localizationManager = LocalizationManager.Instance;
+			localizationManager.Init();
 		}
-		catch(Exception ex)
+		catch(Exception exception)
 		{
-			TeaLog.Info(ex.ToString());
+			TeaLog.Info(exception.ToString());
 		}
-
 	}
 
 	public void OnImGuiRender()
@@ -45,9 +47,9 @@ public class MHWTeaOverlayPlugin : IPlugin
 				CustomizationWindow.Instance.isOpened = !CustomizationWindow.Instance.isOpened;
 			}
 		}
-		catch (Exception ex)
+		catch (Exception exception)
 		{
-			TeaLog.Info(ex.ToString());
+			TeaLog.Info(exception.ToString());
 		}
 	}
 
@@ -57,11 +59,9 @@ public class MHWTeaOverlayPlugin : IPlugin
 		{
 			CustomizationWindow.Instance.Render();
 		}
-		catch (Exception ex)
+		catch (Exception exception)
 		{
-			TeaLog.Info(ex.ToString());
+			TeaLog.Info(exception.ToString());
 		}
-
-		
 	}
 }
