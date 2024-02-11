@@ -1,42 +1,54 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.NetworkInformation;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 
 namespace MHWTeaOverlay;
 
 public static class JsonManager
 {
 
-	public static JObject ParseJson(string json)
+	public static readonly JsonSerializerOptions JsonSerializerOptionsInstance = new() { WriteIndented = true, AllowTrailingCommas = true };
+
+
+	public static string Serialize(object obj)
 	{
-		return JObject.Parse(json);
+		return JsonSerializer.Serialize(obj, JsonSerializerOptionsInstance).Replace("  ", "\t");
 	}
 
-	public static JObject ParseJsonFromFile(string filePathName)
+	public static async Task SerializeToFile(string filePathName, string json)
 	{
-		var json = File.ReadAllText(filePathName);
-		return ParseJson(json);
+		//File.WriteAllText(filePathName, json);
+;
+		var file = File.Open(filePathName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite);
+		var streamWriter = new StreamWriter(file);
+		streamWriter.AutoFlush = true;
+		file.SetLength(0);
+		await streamWriter.WriteLineAsync(json);
+
+		streamWriter.Close();
+
 	}
 
-	public static string ReadJsonFromFile(string filePathName)
+	public static async Task SearializeToFile(string filePathName, object obj)
 	{
-		return File.ReadAllText(filePathName);
+		await SerializeToFile(filePathName, Serialize(obj));
 	}
 
-	public static void SaveJson(string filePathName, string json)
+	public static async Task<string> ReadFromFile(string filePathName)
 	{
-		File.WriteAllText(filePathName, json);
-	}
+		//return File.ReadAllText(filePathName);
 
-	public static void SaveJson(string filePathName, JObject data)
-	{
-		var json = data.ToString();
-		SaveJson(filePathName, json);
+		var file = File.Open(filePathName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		var streamReader = new StreamReader(file);
+		var content = await streamReader.ReadToEndAsync();
+
+		streamReader.Close();
+
+		return content;
 	}
 }
