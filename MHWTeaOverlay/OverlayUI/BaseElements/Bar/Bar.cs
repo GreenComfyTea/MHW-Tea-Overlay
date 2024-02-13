@@ -1,188 +1,131 @@
-﻿using System;
+﻿using ImGuiNET;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Numerics;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 
 namespace MHWTeaOverlay;
 
-public class Bar
+public class Bar : SingletonAccessor
 {
-	// General
+	public BarCustomization Customization { get; set; }
 
-	public bool Visibility { get; set; } = true;
+	public BarInternal Internal { get; }
 
-	public FillDirections FillDirection { get; set; } = FillDirections.LeftToRight;
-
-	public Vector2 Offset { get; set; } = Vector2.Zero;
-
-	public SizeF Size { get; set; } = SizeF.Empty;
-
-	// Outline
-
-	public bool OutlineVisibility { get; set; } = true;
-
-	public OutlineModes OutlineMode { get; set; } = OutlineModes.Outside;
-
-	public float OutlineOffset { get; set; } = 0f;
-
-	public float OutlineThickness { get; set; } = 1.0f;
-
-	// Colors
-
-	public Color FillColor { get; set; } = Color.FromArgb(200, 255, 255, 255);
-
-	public Color BackgroundColor { get; set; } = Color.FromArgb(200, 127, 127, 127);
-
-	public Color OutlineColor { get; set; } = Color.FromArgb(200, 0, 0, 0);
-
-
-	public Bar()
+	private float percentage = 0.69f;
+	public float Percentage
 	{
-
+		get => percentage;
+		set { percentage = Utils.Clamp(value, 0f, 1f); Internal.CalculateFromPercentage1(); }
 	}
 
-	public void Draw(Vector2 position, float opacityScale = 1f, float fillPercentage = 0.69f)
+	private Vector2 position = Vector2.Zero;
+	public Vector2 Position
 	{
-		opacityScale = Utils.Clamp(opacityScale, 0f, 1f);
-		fillPercentage = Utils.Clamp(fillPercentage, 0f, 1f);
+		get => position;
+		set { position = value; Internal.CalculateFromPosition2(); }
+	}
 
-		if (!Visibility) return;
+	private float opacityScale = 1f;
+	public float OpacityScale
+	{
+		get => opacityScale;
+		set { opacityScale = Utils.Clamp(value, 0f, 1f); Internal.ScaleOpacity3(); }
+	}
 
-		float outlineHalfThickness = 0.5f * OutlineThickness;
+	public Bar() {
+		Customization = new();
+		Customization.Bars.Add(this);
+		Internal = new(this);
 
-		float outlinePositionX = 0f;
-		float outlinePositionY = 0f;
+		Customization.Init();
+		Internal
+			.CalculateFromPercentage1()
+			.CalculateFromPosition2()
+			.ScaleOpacity3();
+	}
 
-		float outlineWidth = 0f;
-		float outlineHeight = 0f;
+	public Bar(BarCustomization customization)
+	{
+		Customization = customization;
+		customization.Bars.Add(this);
+		Internal = new(this);
+		Internal
+			.CalculateFromPercentage1()
+			.CalculateFromPosition2()
+			.ScaleOpacity3();
+	}
 
-		float positionX = 0f;
-		float positionY = 0f;
+	public Bar Draw(Vector2 position, float opacityScale)
+	{
+		Position = position;
+		OpacityScale = opacityScale;
+		Draw();
 
-		float width = 0f;
-		float height = 0f;
+		return this;
+	}
 
-		float fillWidth = 0f;
-		float fillHeight = 0f;
+	public Bar Draw(Vector2 position)
+	{
+		Position = position;
+		Draw();
 
-		float backgroundWidth = 0f;
-		float backgroundHeight = 0f;
+		return this;
+	}
 
-		float backgroundHorizontalShift = 0f;
+	public Bar Draw(float opacityScale)
+	{
+		OpacityScale = opacityScale;
+		Draw();
 
-		switch (OutlineMode)
+		return this;
+	}
+
+	public Bar Draw()
+	{
+		if (!Customization.Visibility) return this;
+		if (Utils.IsApproximatelyEqual(OpacityScale, 0f)) return this;
+
+		var outline = Customization.Outline;
+
+		var customizationInternal = Customization.Internal;
+
+		// Background
+		draw.FilledRectangle(
+			Internal.BackgroundPositionX, Internal.BackgroundPositionY,
+			Internal.BackgroundWidth, Internal.BackgroundHeight,
+			Internal.BackgroundColorDrawAbgr
+		);
+
+		// Fill
+		draw.FilledRectangle(
+			Internal.FillPositionX, Internal.FillPositionY,
+			Internal.FillWidth, Internal.FillHeight,
+			Internal.FillColorDrawAbgr
+		);
+
+		// Outline
+		if (!outline.Visibility || Utils.IsApproximatelyEqual(outline.Thickness, 0f))
 		{
-			case OutlineModes.Inside:
-
-				outlinePositionX = position.X + Offset.X + outlineHalfThickness;
-				outlinePositionY = position.Y + Offset.Y + outlineHalfThickness;
-
-				outlineWidth = Size.Width - OutlineThickness;
-				outlineHeight = Size.Height - OutlineThickness;
-
-				positionX = outlinePositionX + outlineHalfThickness + OutlineOffset;
-				positionY = outlinePositionY + outlineHalfThickness + OutlineOffset;
-
-				width = outlineWidth - 2 * OutlineOffset - OutlineThickness;
-				height = outlineWidth - 2 * OutlineOffset - OutlineThickness;
-
-				break;
-			case OutlineModes.Center:
-
-				outlinePositionX = position.X + Offset.X - outlineHalfThickness;
-				outlinePositionY = position.Y + Offset.Y - outlineHalfThickness;
-
-				outlineWidth = Size.Width + OutlineThickness;
-				outlineHeight = Size.Height + OutlineThickness;
-
-				positionX = outlinePositionX + outlineHalfThickness + OutlineOffset;
-				positionY = outlinePositionY + outlineHalfThickness + OutlineOffset;
-
-				width = outlineWidth - 2 * OutlineOffset - OutlineThickness;
-				height = outlineWidth - 2 * OutlineOffset - OutlineThickness;
-
-				break;
-			case OutlineModes.Outside:
-			default:
-
-				positionX = position.X + Offset.X;
-				positionY = positionY + Offset.Y;
-
-				width = Size.Width;
-				height = Size.Height;
-
-				outlinePositionX = position.X - OutlineOffset - outlineHalfThickness;
-				outlinePositionY = position.Y - OutlineOffset - outlineHalfThickness;
-
-				outlineWidth = Size.Width + 2 * OutlineOffset + OutlineThickness;
-				outlineHeight = Size.Height + 2 * OutlineOffset + OutlineThickness;
-
-				break;
+			return this;
 		}
 
-		switch (FillDirection)
-		{
-			case FillDirections.TopToBottom:
+		draw.OutlineRectangle(
+			Internal.OutlinePositionX, Internal.OutlinePositionY,
+			customizationInternal.OutlineWidth, customizationInternal.OutlineHeight,
+			Internal.OutlineColorDrawAbgr,
+			outline.Thickness
+		);
 
-				fillWidth = width;
-				fillHeight = height * fillPercentage;
-
-				backgroundWidth = width;
-				backgroundHeight = height - fillHeight;
-
-				backgroundHorizontalShift = fillWidth;
-
-				break;
-			case FillDirections.BottomToTop:
-
-				fillWidth = width;
-				fillHeight = height * fillPercentage;
-
-				backgroundWidth = width;
-				backgroundHeight = height - fillHeight;
-
-				backgroundHorizontalShift = backgroundWidth;
-
-				break;
-			case FillDirections.RightToLeft:
-
-				fillWidth = width * fillPercentage;
-				fillHeight = height;
-
-				backgroundWidth = width - fillWidth;
-				backgroundHeight = height;
-
-				backgroundHorizontalShift = backgroundWidth;
-
-				break;
-			case FillDirections.LeftToRight:
-			default:
-
-				fillWidth = width * fillPercentage;
-				fillHeight = height;
-
-				backgroundWidth = width - fillWidth;
-				backgroundHeight = height;
-
-				backgroundHorizontalShift = fillWidth;
-
-				break;
-		}
-
-		int fillColorInt = FillColor.ToArgb();
-
-
-		//local foreground_color = bar.colors.foreground;
-		//local background_color = bar.colors.background;
-		//local outline_color = bar.colors.outline;
-
-		//if opacity_scale < 1 then
-		//	foreground_color = this.scale_color_opacity(foreground_color, opacity_scale);
-		//background_color = this.scale_color_opacity(background_color, opacity_scale);
-		//outline_color = this.scale_color_opacity(outline_color, opacity_scale);
-		//end
+		return this;
 	}
 }
