@@ -25,14 +25,14 @@ namespace MHWTeaOverlay
 		[JsonIgnore]
 		public bool IsDefault { get; set; } = false;
 
+		public LocalizedStrings_LocalizationInfo LocalizationInfo { get; set; } = new();
 
-		public Dictionary<string, string> UI { get; set; } = new();
+		public LocalizedStrings_UI UI { get; set; } = new();
 
-		public Dictionary<string, string> ImGui { get; set; } = new();
+		public LocalizedStrings_ImGui ImGui { get; set; } = new();
 
-		public Localization() {
-			DefaultLocalization.Initialize(this);
-		}
+
+		public Localization() { }
 
 		public async Task<Localization> Init()
 		{
@@ -41,7 +41,6 @@ namespace MHWTeaOverlay
 			TeaLog.Info($"Localization {Name}: Initializing...");
 
 			IsDefault = true;
-
 			await Save();
 
 			TeaLog.Info($"Localization {Name}: Done!");
@@ -56,50 +55,11 @@ namespace MHWTeaOverlay
 			TeaLog.Info($"Localization {Name}: Initializing...");
 
 			IsDefault = false;
-
-			RemoveExtraProperties();
 			await Save();
 
 			TeaLog.Info($"Localization {Name}: Done!");
 
 			return this;
-		}
-
-		public void RemoveExtraProperties()
-		{
-			TeaLog.Info($"Localization {Name}: Removing Extra Strings...");
-
-			var currentToDefaultMap = new Dictionary<Dictionary<string, string>, Dictionary<string, string>>
-			{
-				[UI] = localizationManager.Default.UI,
-				[ImGui] = localizationManager.Default.ImGui
-			};
-
-			foreach (var localizationMapPair in currentToDefaultMap)
-			{
-				var currentCategory = localizationMapPair.Key;
-				var defaultCategory = localizationMapPair.Value;
-
-				var keysToRemove = new LinkedList<string>();
-
-				foreach (var localizationStringPair in currentCategory)
-				{
-					var localizedStringKey = localizationStringPair.Key;
-					var localizedString = localizationStringPair.Value;
-
-					if (!defaultCategory.ContainsKey(localizedStringKey))
-					{
-						keysToRemove.AddLast(localizedStringKey);
-					}
-				}
-
-				foreach (var keyToRemove in keysToRemove)
-				{
-					TeaLog.Info($"Removing {keyToRemove}");
-
-					currentCategory.Remove(keyToRemove);
-				}
-			}
 		}
 
 		public async Task Save()

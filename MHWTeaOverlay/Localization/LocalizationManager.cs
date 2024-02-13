@@ -1,11 +1,11 @@
 ﻿using ImGuiNET;
+using SharpPluginLoader.Core.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Exception = System.Exception;
 
 namespace MHWTeaOverlay;
 
@@ -18,33 +18,41 @@ public class LocalizationManager
 
 	// Explicit static constructor to tell C# compiler
 	// not to mark type as beforefieldinit
-	static LocalizationManager() {}
+	static LocalizationManager() { }
 
 	// Singleton Pattern End
+	private LocalizationWatcher LocalizationWatcherInstance { get; set; }
+	private LocalizationManager() { }
 
 	public Dictionary<string, Localization> Localizations { get; set; } = new();
-
 	public Localization Default { get; set; }
-	
 	public Localization Current { get; set; }
 
-	private LocalizationWatcher LocalizationWatcherInstance { get; set; }
-
-
-	private LocalizationManager() { }
+	public LocalizedStrings_LocalizationInfo LocalizationInfo { get; set; }
+	public LocalizedStrings_UI UI { get; set; }
+	public LocalizedStrings_ImGui ImGui { get; set; }
 
 	public async void Init()
 	{
 		TeaLog.Info("LocalizationManager: Initializing...");
 
 		Default = await new Localization().Init();
-		Current = Default;
+		SetCurrentLocalization(Default);
 
 		await LoadAllLocalizations();
 
 		LocalizationWatcherInstance = new LocalizationWatcher();
 
 		TeaLog.Info("LocalizationManager: Done!");
+	}
+
+	public void SetCurrentLocalization(Localization localization)
+	{
+		Current = localization;
+
+		LocalizationInfo = localization.LocalizationInfo;
+		UI = localization.UI;
+		ImGui = localization.ImGui;
 	}
 
 	public async Task LoadAllLocalizations()
@@ -78,41 +86,15 @@ public class LocalizationManager
 
 			Localizations[localizationName] = localization;
 
-			if(localizationName.Equals(Current))
-			{
-				Current = localization;
-			}
+			//if(localizationName.Equals(Current.Name))
+			//{
+				//Current = localization;
+			//}
 		}
 		catch(Exception exception)
 		{
 			TeaLog.Info(exception.ToString());
 		}
-	}
-
-	public string UI(string key)
-	{
-		string localizedString;
-		
-		var currentSuccess = Current.UI.TryGetValue(key, out localizedString);
-		if (currentSuccess) return localizedString;
-
-		var defaultSuccess = Default.UI.TryGetValue(key, out localizedString);
-		if (defaultSuccess) return localizedString;
-
-		return key;
-	}
-
-	public string ImGui(string key)
-	{
-		string localizedString;
-
-		var currentSuccess = Current.ImGui.TryGetValue(key, out localizedString);
-		if (currentSuccess) return localizedString;
-
-		var defaultSuccess = Default.ImGui.TryGetValue(key, out localizedString);
-		if (defaultSuccess) return localizedString;
-
-		return key;
 	}
 
 	public override string ToString()
