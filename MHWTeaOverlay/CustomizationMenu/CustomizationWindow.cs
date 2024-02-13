@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace MHWTeaOverlay
 {
 
-	public class CustomizationWindow
+	public class CustomizationWindow : SingletonAccessor
 	{
 		// Singleton Pattern
 		private static readonly CustomizationWindow singleton = new();
@@ -27,6 +27,8 @@ namespace MHWTeaOverlay
 
 		public bool isOpened = false;
 
+		private Bar bar = new();
+
 		private CustomizationWindow() { }
 
 		public void Render()
@@ -37,9 +39,29 @@ namespace MHWTeaOverlay
 
 				if (!isOpened) return;
 
-				ImGui.SetWindowFontScale(1.5f);
+				var font = ImGui.GetFont();
+				var oldScale = font.Scale;
+				font.Scale *= 1.5f;
+
+				//ImGui.GetMainViewport().WorkSize = new Vector2(2880, 1620);
+				//ImGui.GetMainViewport().Size = new Vector2(2880, 1620);
+
+				ImGui.PushFont(font);
 				ImGui.Begin("MH:World Tea Overlay", ref isOpened);
-				ImGui.SetWindowFontScale(1.5f);
+
+				bar.Position = new Vector2(1200f, 100f);
+				bar.Draw();
+
+				//draw.FilledRectangle(0f, 0f, 5000f, 5000f, 0x800000FF);
+
+				bar.Customization.RenderImGui();
+
+				//ImGui.Text($"WorkSize: {ImGui.GetMainViewport().WorkSize}");
+				//ImGui.Text($"DpiScale: {ImGui.GetMainViewport().DpiScale}");
+				//ImGui.Text($"Size: {ImGui.GetMainViewport().Size}");
+
+				font.Scale = oldScale;
+				ImGui.PopFont();
 
 				ImGui.End();
 			}
