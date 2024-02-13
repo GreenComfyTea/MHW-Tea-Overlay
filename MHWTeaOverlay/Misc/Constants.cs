@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,4 +23,9 @@ public static class Constants
 	public const string FONTS_PATH = PLUGIN_DATA_PATH + @"fonts\";
 
 	public const string CONFIG_FILE_PATH_NAME = PLUGIN_DATA_PATH + "config.json";
+
+	public const float DRAG_FLOAT_SPEED = 0.1f;
+	public const float DRAG_FLOAT_MAX = 15360f;
+	public const float DRAG_FLOAT_MIN = -DRAG_FLOAT_MAX;
+	public const string DRAG_FLOAT_FORMAT = "0.0";
 }
