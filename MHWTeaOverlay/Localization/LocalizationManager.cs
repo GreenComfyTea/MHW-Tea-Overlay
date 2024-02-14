@@ -36,13 +36,17 @@ public class LocalizationManager
 	{
 		TeaLog.Info("LocalizationManager: Initializing...");
 
-		Default = await new Localization().Init();
+		TeaLog.Info("-1");
+		Default = new Localization();
+		TeaLog.Info("0");
+		await Default.Init();
+
+		TeaLog.Info("1");
 		SetCurrentLocalization(Default);
-
+		TeaLog.Info("2");
 		await LoadAllLocalizations();
-
+		TeaLog.Info("3");
 		LocalizationWatcherInstance = new LocalizationWatcher();
-
 		TeaLog.Info("LocalizationManager: Done!");
 	}
 

@@ -1,8 +1,6 @@
 ﻿using SharpPluginLoader.Core;
 using ImGuiNET;
 using System.Diagnostics;
-using System.ComponentModel.DataAnnotations;
-using System.Net.WebSockets;
 
 namespace MHWTeaOverlay;
 
@@ -44,7 +42,7 @@ public class MHWTeaOverlayPlugin : IPlugin
 
 			if (ImGui.Button("TeaTime Overlay"))
 			{
-				CustomizationWindow.Instance.isOpened = !CustomizationWindow.Instance.isOpened;
+				CustomizationWindow.Instance.IsOpened = !CustomizationWindow.Instance.IsOpened;
 			}
 		}
 		catch (Exception exception)

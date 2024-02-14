@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using MHWTeaOverlay.Misc;
 using SharpPluginLoader.Core;
 using System;
 using System.Collections;
@@ -28,7 +27,6 @@ namespace MHWTeaOverlay
 		public LocalizedStrings_UI UI { get; set; } = new();
 
 		public LocalizedStrings_ImGui ImGui { get; set; } = new();
-
 
 		public Localization() { }
 

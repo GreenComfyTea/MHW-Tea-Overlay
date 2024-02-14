@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using MHWTeaOverlay.Misc;
 using SharpPluginLoader.Core;
 using SharpPluginLoader.Core.Configuration;
 using System;
@@ -13,7 +12,7 @@ using System.Threading.Tasks;
 namespace MHWTeaOverlay
 {
 
-    public class CustomizationWindow : SingletonAccessor
+	public class CustomizationWindow : SingletonAccessor
 	{
 		// Singleton Pattern
 		private static readonly CustomizationWindow singleton = new();
@@ -26,7 +25,8 @@ namespace MHWTeaOverlay
 
 		// Singleton Pattern End
 
-		public bool isOpened = false;
+		private bool isOpened = false;
+		public bool IsOpened { get => isOpened; set => isOpened = value; }
 
 		private Bar bar = new();
 
@@ -38,7 +38,7 @@ namespace MHWTeaOverlay
 			{
 				//var color = new Vector4(0.1f, 0.2f, 0.3f, 0.4f);
 
-				if (!isOpened) return;
+				if (!IsOpened) return;
 
 				var font = ImGui.GetFont();
 				var oldScale = font.Scale;

@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using MHWTeaOverlay.Misc;
 using SharpPluginLoader.Core;
 using System;
 using System.Collections;
