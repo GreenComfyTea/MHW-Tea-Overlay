@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using MHWTeaOverlay.Misc;
 using SharpPluginLoader.Core;
 using SharpPluginLoader.Core.Configuration;
 using System;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 namespace MHWTeaOverlay
 {
 
-	public class CustomizationWindow : SingletonAccessor
+    public class CustomizationWindow : SingletonAccessor
 	{
 		// Singleton Pattern
 		private static readonly CustomizationWindow singleton = new();

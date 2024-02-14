@@ -1,4 +1,5 @@
 ﻿using ImGuiNET;
+using MHWTeaOverlay.Misc;
 using SharpPluginLoader.Core;
 using System;
 using System.Collections;
@@ -14,11 +15,8 @@ using System.Xml.Linq;
 
 namespace MHWTeaOverlay
 {
-	public class Localization
+	public class Localization : SingletonAccessor
 	{
-		[JsonIgnore]
-		private readonly LocalizationManager localizationManager = LocalizationManager.Instance;
-
 		[JsonIgnore]
 		public string Name { get; set; } = "";
 

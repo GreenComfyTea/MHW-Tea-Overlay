@@ -27,8 +27,8 @@ public class MHWTeaOverlayPlugin : IPlugin
 		{
 			TeaLog.Info("Plugin Loaded!");
 
-			var localizationManager = LocalizationManager.Instance;
-			localizationManager.Init();
+			LocalizationManager.Instance.Init();
+			ConfigManager.Instance.Init();
 		}
 		catch(Exception exception)
 		{

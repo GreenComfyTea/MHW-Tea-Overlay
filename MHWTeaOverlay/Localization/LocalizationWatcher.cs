@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MHWTeaOverlay.Misc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,10 +8,8 @@ using System.Xml.Linq;
 
 namespace MHWTeaOverlay;
 
-public class LocalizationWatcher
+public class LocalizationWatcher : SingletonAccessor
 {
-	private LocalizationManager localizationManager = LocalizationManager.Instance;
-
 	private Dictionary<string, DateTime> LastEventTimes = new();
 
 	private FileSystemWatcher Watcher { get; }
