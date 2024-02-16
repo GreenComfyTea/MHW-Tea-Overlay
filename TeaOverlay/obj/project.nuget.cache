@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "phENSbUp36Q4PGukmFLsi4NxTls1jtHyburCFzxmgdxsM67ZDPB7JELE/TgCHM8LUSv1x8ZlkzBmn9OnZ7DLhg==",
+  "success": true,
+  "projectFilePath": "E:\\GitHub\\MHW-Tea-Overlay\\TeaOverlay\\TeaOverlay.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\GreenTea\\.nuget\\packages\\iced\\1.17.0\\iced.1.17.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\imgui.net\\1.90.1.1\\imgui.net.1.90.1.1.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\reloaded.assembler\\1.0.14\\reloaded.assembler.1.0.14.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\reloaded.hooks\\4.3.0\\reloaded.hooks.4.3.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\reloaded.hooks.definitions\\1.15.0\\reloaded.hooks.definitions.1.15.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\reloaded.memory\\7.0.0\\reloaded.memory.7.0.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\reloaded.memory.buffers\\2.0.0\\reloaded.memory.buffers.2.0.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\sharppluginloader.core\\0.0.3.1\\sharppluginloader.core.0.0.3.1.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\system.numerics.vectors\\4.4.0\\system.numerics.vectors.4.4.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.4.0\\system.runtime.compilerservices.unsafe.4.4.0.nupkg.sha512",
+    "C:\\Users\\GreenTea\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.22621.31\\microsoft.windows.sdk.net.ref.10.0.22621.31.nupkg.sha512"
+  ],
+  "logs": []
+}
