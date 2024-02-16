@@ -48,12 +48,16 @@ namespace MHWTeaOverlay
 				//ImGui.GetMainViewport().Size = new Vector2(2880, 1620);
 
 				ImGui.PushFont(font);
-				ImGui.Begin("MH:World Tea Overlay", ref isOpened);
+				ImGui.Begin($"{Constants.MOD_NAME}", ref isOpened);
 
 				bar.Position = new Vector2(1200f, 100f);
 				bar.Draw();
 
 				//draw.FilledRectangle(0f, 0f, 5000f, 5000f, 0x800000FF);
+
+				configManager.Customization.RenderImGui();
+
+				ImGui.Text($"TestString: {configManager.Current.TestString}");
 
 				bar.Customization.RenderImGui();
 
