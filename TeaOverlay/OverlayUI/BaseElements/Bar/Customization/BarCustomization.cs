@@ -44,6 +44,18 @@ public class BarCustomization : SingletonAccessor
 		return this;
 	}
 
+	public async Task OnChanged()
+	{
+		Internal.Precalculate();
+
+		foreach (var bar in Bars)
+		{
+			bar.Internal
+				.CalculateFromPercentage1()
+				.CalculateFromPosition2()
+				.ScaleOpacity3();
+		}
+	}
 
 	public bool RenderImGui()
 	{
@@ -62,18 +74,7 @@ public class BarCustomization : SingletonAccessor
 			ImGui.TreePop();
 		}
 
-		if (changed)
-		{
-			Internal.Precalculate();
-
-			foreach (var bar in Bars)
-			{
-				bar.Internal
-					.CalculateFromPercentage1()
-					.CalculateFromPosition2()
-					.ScaleOpacity3();
-			}
-		}
+		if (changed) _ = OnChanged();
 
 		return changed;
 	}
