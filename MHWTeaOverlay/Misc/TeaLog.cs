@@ -12,8 +12,23 @@ namespace MHWTeaOverlay
 
 		public static void Info(string text)
 		{
+			Log.Info($"[{Constants.MOD_NAME}] {text}");
+		}
 
-			Log.Info($"MHW Tea Overlay: {text}");
+		public static void Warn(string text)
+		{
+
+			Log.Warn($"[{Constants.MOD_NAME}] {text}");
+		}
+
+		public static void Error(string text)
+		{
+			Log.Error($"[{Constants.MOD_NAME}] {text}");
+		}
+
+		public static void Debug(string text)
+		{
+			Log.Debug($"[{Constants.MOD_NAME}] {text}");
 		}
 	}
 }
