@@ -24,6 +24,21 @@ public class LocalizedStrings_UI : LocalizedStrings
 
 public class LocalizedStrings_ImGui : LocalizedStrings
 {
+
+	// Config
+
+	public string Config { get; set; } = "Config";
+
+	public string ConfigName { get; set; } = "Config Name";
+
+	public string New { get; set; } = "New";
+	public string Duplicate { get; set; } = "Duplicate";
+	public string Reset { get; set; } = "Reset";
+	public string Delete { get; set; } = "Delete";
+
+	// Language
+
+	// Bar
 	public string Visible { get; set; } = "Visible";
 	public string Settings { get; set; } = "Settings";
 

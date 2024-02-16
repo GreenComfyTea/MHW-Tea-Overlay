@@ -32,34 +32,34 @@ public class LocalizationManager
 	public LocalizedStrings_UI UI { get; set; }
 	public LocalizedStrings_ImGui ImGui { get; set; }
 
-	public async void Init()
+	public LocalizationManager Init()
 	{
 		TeaLog.Info("LocalizationManager: Initializing...");
 
-		TeaLog.Info("-1");
 		Default = new Localization();
-		TeaLog.Info("0");
-		await Default.Init();
+		Default.Init();
 
-		TeaLog.Info("1");
 		SetCurrentLocalization(Default);
-		TeaLog.Info("2");
-		await LoadAllLocalizations();
-		TeaLog.Info("3");
+		LoadAllLocalizations();
+
 		LocalizationWatcherInstance = new LocalizationWatcher();
 		TeaLog.Info("LocalizationManager: Done!");
+
+		return this;
 	}
 
-	public void SetCurrentLocalization(Localization localization)
+	public LocalizationManager SetCurrentLocalization(Localization localization)
 	{
 		Current = localization;
 
 		LocalizationInfo = localization.LocalizationInfo;
 		UI = localization.UI;
 		ImGui = localization.ImGui;
+
+		return this;
 	}
 
-	public async Task LoadAllLocalizations()
+	public LocalizationManager LoadAllLocalizations()
 	{
 
 		TeaLog.Info("LocalizationManager: Loading All Localizations...");
@@ -70,34 +70,39 @@ public class LocalizationManager
 
 		foreach (var localalizationFileNamePath in Directory.EnumerateFiles(Constants.LOCALIZATIONS_PATH, "*.json"))
 		{
-			await LoadLocalization(localalizationFileNamePath);
+			LoadLocalization(localalizationFileNamePath);
 		}
+
+		return this;
 	}
 
-	public async Task LoadLocalization(string localizationFileNamePath)
+	public LocalizationManager LoadLocalization(string localizationFileNamePath)
 	{
 		try
 		{
 			var localizationName = Path.GetFileNameWithoutExtension(localizationFileNamePath);
 
-			if (localizationName.Equals(Default.Name)) return;
+			if (localizationName.Equals(Default.Name)) return this;
 
 			TeaLog.Info($"Localization {localizationName}: Loading...");
 
-			var json = await JsonManager.ReadFromFile(localizationFileNamePath);
+			var json = JsonManager.ReadFromFile(localizationFileNamePath);
 
-			var localization = await JsonSerializer.Deserialize<Localization>(json, JsonManager.JsonSerializerOptionsInstance).Init(localizationName);
+			var localization = JsonSerializer.Deserialize<Localization>(json, JsonManager.JsonSerializerOptionsInstance).Init(localizationName);
 
 			Localizations[localizationName] = localization;
 
 			//if(localizationName.Equals(Current.Name))
 			//{
-				//Current = localization;
+			//Current = localization;
 			//}
+
+			return this;
 		}
 		catch(Exception exception)
 		{
-			TeaLog.Info(exception.ToString());
+			TeaLog.Error(exception.ToString());
+			return this;
 		}
 	}
 

@@ -18,20 +18,28 @@ public class MHWTeaOverlayPlugin : IPlugin
 			ImGuiWrappedInTreeNode = false
 		};
 	}
-
-	public void OnLoad()
+	public async Task Init()
 	{
 		try
 		{
 			TeaLog.Info("Plugin Loaded!");
 
-			LocalizationManager.Instance.Init();
-			ConfigManager.Instance.Init();
+			var localizationManager = LocalizationManager.Instance;
+			var configManager = ConfigManager.Instance;
+			var draw = Draw.Instance;
+
+			localizationManager.Init();
+			configManager.Init();
 		}
-		catch(Exception exception)
+		catch (Exception exception)
 		{
 			TeaLog.Info(exception.ToString());
 		}
+	}
+
+	public void OnLoad()
+	{
+		_ = Init();
 	}
 
 	public void OnImGuiRender()
@@ -40,14 +48,14 @@ public class MHWTeaOverlayPlugin : IPlugin
 		{
 			ImGui.SetWindowFontScale(1.5f);
 
-			if (ImGui.Button("TeaTime Overlay"))
+			if (ImGui.Button($"{Constants.MOD_NAME}"))
 			{
 				CustomizationWindow.Instance.IsOpened = !CustomizationWindow.Instance.IsOpened;
 			}
 		}
 		catch (Exception exception)
 		{
-			TeaLog.Info(exception.ToString());
+			TeaLog.Error(exception.ToString());
 		}
 	}
 
@@ -59,7 +67,7 @@ public class MHWTeaOverlayPlugin : IPlugin
 		}
 		catch (Exception exception)
 		{
-			TeaLog.Info(exception.ToString());
+			TeaLog.Error(exception.ToString());
 		}
 	}
 }

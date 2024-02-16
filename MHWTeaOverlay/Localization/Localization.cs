@@ -30,39 +30,41 @@ namespace MHWTeaOverlay
 
 		public Localization() { }
 
-		public async Task<Localization> Init()
+		public Localization Init()
 		{
 			Name = Constants.DEFAULT_LOCALIZATION;
 
 			TeaLog.Info($"Localization {Name}: Initializing...");
 
 			IsDefault = true;
-			await Save();
+			Save();
 
 			TeaLog.Info($"Localization {Name}: Done!");
 
 			return this;
 		}
 
-		public async Task<Localization> Init(string name)
+		public Localization Init(string name)
 		{
 			Name = name;
 
 			TeaLog.Info($"Localization {Name}: Initializing...");
 
 			IsDefault = false;
-			await Save();
+			Save();
 
 			TeaLog.Info($"Localization {Name}: Done!");
 
 			return this;
 		}
 
-		public async Task Save()
+		public Localization Save()
 		{
 			TeaLog.Info($"Localization {Name}: Saving...");
 
-			await JsonManager.SearializeToFile(Path.Combine(Constants.LOCALIZATIONS_PATH, $"{Name}.json"), this);
+			JsonManager.SearializeToFile(Path.Combine(Constants.LOCALIZATIONS_PATH, $"{Name}.json"), this);
+
+			return this;
 		}
 
 		public override string ToString()
