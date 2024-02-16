@@ -52,7 +52,7 @@ public class TeaOverlayPlugin : IPlugin
 		{
 			ImGui.PushFont(font);
 
-			if (ImGui.Button($"{Constants.MOD_NAME}"))
+			if (ImGui.Button($"{Constants.MOD_NAME} v{Constants.VERSION}"))
 			{
 				CustomizationWindow.Instance.IsOpened = !CustomizationWindow.Instance.IsOpened;
 			}
