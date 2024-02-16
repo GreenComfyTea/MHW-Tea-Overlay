@@ -21,7 +21,7 @@ public class Config : SingletonAccessor
 	[JsonIgnore]
 	public string Name { get; set; } = "";
 
-	public string TestString { get; set; } = "123";
+	public string Language { get; set; } = "en-us";
 
 	public Config() { }
 
@@ -51,6 +51,8 @@ public class Config : SingletonAccessor
 
 		configManager.ConfigWatcherInstance.TemporarilyDisable(Name);
 		JsonManager.SearializeToFile(Path.Combine(Constants.CONFIGS_PATH, $"{Name}.json"), this);
+		
+		TeaLog.Info($"Config {Name}: Done!");
 
 		return this;
 	}

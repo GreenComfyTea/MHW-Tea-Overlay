@@ -79,14 +79,22 @@ public class LocalizationWatcher : SingletonAccessor
 		DateTime currentEventTime = DateTime.Now;
 		DateTime lastEventTime;
 
-		var contains = LastEventTimes.TryGetValue(filePathName, out lastEventTime);
+		var contains = LastEventTimes.TryGetValue(fileName, out lastEventTime);
 
-		if (contains && (currentEventTime - lastEventTime).Seconds < 1) return;
+		if (contains && (currentEventTime - lastEventTime).TotalSeconds < 1) return;
 
-		LastEventTimes[filePathName] = currentEventTime;
+		LastEventTimes[fileName] = currentEventTime;
 
-		//_ = localizationManager.LoadLocalization(filePathName);
-		Timers.SetTimeout(() => _ = localizationManager.LoadLocalization(filePathName), 250);
+		Timers.SetTimeout(() =>
+		{
+			var localizationName = localizationManager.LoadLocalization(filePathName);
+			localizationManager.SetCurrentLocalization(localizationManager.Current.Name);
+		}, 250);
+	}
+
+	public void TemporarilyDisable(string localizationName)
+	{
+		LastEventTimes[$"{localizationName}.json"] = DateTime.Now;
 	}
 
 	public override string ToString()

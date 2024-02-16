@@ -21,10 +21,15 @@ public class LocalizationManager
 	static LocalizationManager() { }
 
 	// Singleton Pattern End
-	private LocalizationWatcher LocalizationWatcherInstance { get; set; }
+
 	private LocalizationManager() { }
 
+	public LocalizationWatcher LocalizationWatcherInstance { get; set; }
+
 	public Dictionary<string, Localization> Localizations { get; set; } = new();
+
+	public LocalizationCustomization Customization { get; set; }
+
 	public Localization Default { get; set; }
 	public Localization Current { get; set; }
 
@@ -36,13 +41,15 @@ public class LocalizationManager
 	{
 		TeaLog.Info("LocalizationManager: Initializing...");
 
+		Customization = new();
+		LocalizationWatcherInstance = new();
+
 		Default = new Localization();
 		Default.Init();
 
 		SetCurrentLocalization(Default);
 		LoadAllLocalizations();
 
-		LocalizationWatcherInstance = new LocalizationWatcher();
 		TeaLog.Info("LocalizationManager: Done!");
 
 		return this;
@@ -56,6 +63,16 @@ public class LocalizationManager
 		UI = localization.UI;
 		ImGui = localization.ImGui;
 
+		Customization.SetCurrentLocalization(localization.Name);
+
+		return this;
+	}
+
+	public LocalizationManager SetCurrentLocalization(string localizationName)
+	{
+		var localization = Localizations[localizationName];
+		SetCurrentLocalization(localization);
+
 		return this;
 	}
 
@@ -65,24 +82,31 @@ public class LocalizationManager
 		TeaLog.Info("LocalizationManager: Loading All Localizations...");
 
 		Localizations = new();
+		var localizationNamesList = new List<string>();
 		Localizations[Default.Name] = Default;
 
 
 		foreach (var localalizationFileNamePath in Directory.EnumerateFiles(Constants.LOCALIZATIONS_PATH, "*.json"))
 		{
-			LoadLocalization(localalizationFileNamePath);
+			var localizationName = LoadLocalization(localalizationFileNamePath);
+			if (localizationName == null) continue;
+
+			localizationNamesList.Add(localizationName);
 		}
+
+		Customization.LocalizationNamesList = localizationNamesList;
+		Customization.UpdateNamesList();
 
 		return this;
 	}
 
-	public LocalizationManager LoadLocalization(string localizationFileNamePath)
+	public string LoadLocalization(string localizationFileNamePath)
 	{
 		try
 		{
 			var localizationName = Path.GetFileNameWithoutExtension(localizationFileNamePath);
 
-			if (localizationName.Equals(Default.Name)) return this;
+			if (localizationName.Equals(Default.Name)) return localizationName;
 
 			TeaLog.Info($"Localization {localizationName}: Loading...");
 
@@ -92,17 +116,12 @@ public class LocalizationManager
 
 			Localizations[localizationName] = localization;
 
-			//if(localizationName.Equals(Current.Name))
-			//{
-			//Current = localization;
-			//}
-
-			return this;
+			return localizationName;
 		}
 		catch(Exception exception)
 		{
 			TeaLog.Error(exception.ToString());
-			return this;
+			return null;
 		}
 	}
 

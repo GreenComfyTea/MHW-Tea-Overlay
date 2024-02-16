@@ -68,6 +68,7 @@ public class ConfigManager : SingletonAccessor
 		SelectedConfigInstance.SelectedConfig = config.Name;
 		SelectedConfigInstance.Save();
 		Customization.SetCurrentConfig(config.Name);
+		localizationManager.SetCurrentLocalization(Current.Language);
 
 		return this;
 	}
@@ -80,9 +81,9 @@ public class ConfigManager : SingletonAccessor
 		var configNamesList = new List<string>();
 		var isDefaultConfigFromFile = false;
 
-		foreach (var localalizationFileNamePath in Directory.EnumerateFiles(Constants.CONFIGS_PATH, "*.json"))
+		foreach (var localizationFileNamePath in Directory.EnumerateFiles(Constants.CONFIGS_PATH, "*.json"))
 		{
-			var configName = LoadConfig(localalizationFileNamePath);
+			var configName = LoadConfig(localizationFileNamePath);
 			if (configName == null) continue;
 
 			configNamesList.Add(configName);
@@ -115,8 +116,6 @@ public class ConfigManager : SingletonAccessor
 			var json = JsonManager.ReadFromFile(configFileNamePath);
 
 			Configs[configName] = JsonSerializer.Deserialize<Config>(json, JsonManager.JsonSerializerOptionsInstance).Init(configName).Save();
-
-			Customization.AddConfig(configName);
 
 			return configName;
 		}

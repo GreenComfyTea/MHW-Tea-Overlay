@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TeaOverlay")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e470a084b991f76314ba8a25afe87ebcd2a7a4d6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+eebc7176732273f525da3d0264d806bf90bdebdf")]
 [assembly: System.Reflection.AssemblyProductAttribute("TeaOverlay")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TeaOverlay")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

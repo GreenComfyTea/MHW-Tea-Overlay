@@ -44,18 +44,28 @@ public class TeaOverlayPlugin : IPlugin
 
 	public void OnImGuiRender()
 	{
+		var font = ImGui.GetFont();
+		var oldScale = font.Scale;
+		font.Scale *= 1.5f;
+
 		try
 		{
-			ImGui.SetWindowFontScale(1.5f);
+			ImGui.PushFont(font);
 
 			if (ImGui.Button($"{Constants.MOD_NAME}"))
 			{
 				CustomizationWindow.Instance.IsOpened = !CustomizationWindow.Instance.IsOpened;
 			}
+
+			font.Scale = oldScale;
+			ImGui.PopFont();
 		}
 		catch (Exception exception)
 		{
 			TeaLog.Error(exception.ToString());
+
+			font.Scale = oldScale;
+			ImGui.PopFont();
 		}
 	}
 

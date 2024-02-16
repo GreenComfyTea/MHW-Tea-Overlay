@@ -38,6 +38,8 @@ public class LocalizedStrings_ImGui : LocalizedStrings
 
 	// Language
 
+	public string Language { get; set; } = "Language";
+
 	// Bar
 	public string Visible { get; set; } = "Visible";
 	public string Settings { get; set; } = "Settings";

@@ -62,6 +62,7 @@ namespace TeaOverlay
 		{
 			TeaLog.Info($"Localization {Name}: Saving...");
 
+			localizationManager.LocalizationWatcherInstance.TemporarilyDisable(Name);
 			JsonManager.SearializeToFile(Path.Combine(Constants.LOCALIZATIONS_PATH, $"{Name}.json"), this);
 
 			return this;

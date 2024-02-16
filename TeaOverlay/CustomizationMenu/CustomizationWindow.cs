@@ -8,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TeaOverlay
 {
@@ -34,15 +35,17 @@ namespace TeaOverlay
 
 		public void Render()
 		{
+			if (!IsOpened) return;
+
+			var font = ImGui.GetFont();
+			var oldScale = font.Scale;
+			font.Scale *= 1.5f;
+
 			try
 			{
+				var changed = false;
+
 				//var color = new Vector4(0.1f, 0.2f, 0.3f, 0.4f);
-
-				if (!IsOpened) return;
-
-				var font = ImGui.GetFont();
-				var oldScale = font.Scale;
-				font.Scale *= 1.5f;
 
 				//ImGui.GetMainViewport().WorkSize = new Vector2(2880, 1620);
 				//ImGui.GetMainViewport().Size = new Vector2(2880, 1620);
@@ -56,10 +59,11 @@ namespace TeaOverlay
 				//draw.FilledRectangle(0f, 0f, 5000f, 5000f, 0x800000FF);
 
 				configManager.Customization.RenderImGui();
+				changed = localizationManager.Customization.RenderImGui() || changed;
 
-				ImGui.Text($"TestString: {configManager.Current.TestString}");
-
-				bar.Customization.RenderImGui();
+				ImGui.Text($"Language: {configManager.Current.Language}");
+				ImGui.Text($"Translator: {localizationManager.Current.LocalizationInfo.Translator}");
+				changed = bar.Customization.RenderImGui() || changed;
 
 				//ImGui.Text($"WorkSize: {ImGui.GetMainViewport().WorkSize}");
 				//ImGui.Text($"DpiScale: {ImGui.GetMainViewport().DpiScale}");
@@ -69,10 +73,18 @@ namespace TeaOverlay
 				ImGui.PopFont();
 
 				ImGui.End();
+
+				if (changed)
+				{
+					configManager.Current.Save();
+				}
 			}
 			catch (Exception e)
 			{
 				TeaLog.Info(e.ToString());
+
+				font.Scale = oldScale;
+				ImGui.PopFont();
 			}
 		}
 	}

@@ -30,17 +30,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="data\configs\" />
     <Folder Include="data\fonts\" />
+    <Folder Include="data\localizations\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="data\config.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="data\configs\default.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="data\localizations\ja-jp.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
