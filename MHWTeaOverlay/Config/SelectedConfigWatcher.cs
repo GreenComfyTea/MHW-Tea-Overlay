@@ -32,7 +32,7 @@ public class SelectedConfigWatcher : SingletonAccessor
 		Watcher.Renamed += OnSelectedConfigFileRenamed;
 		Watcher.Error += OnSelectedConfigFileError;
 
-		Watcher.Filter = $"{Constants.DEFAULT_CONFIG}.json";
+		Watcher.Filter = "*.json";
 		Watcher.EnableRaisingEvents = true;
 
 		TeaLog.Info("SelectedConfigChangeWatcher: Done!");
@@ -44,29 +44,32 @@ public class SelectedConfigWatcher : SingletonAccessor
 
 		TeaLog.Info($"SelectedConfigChangeWatcher: Changed {e.Name}");
 
-		UpdateConfig(e.FullPath, e.Name);
+		UpdateConfig(e.Name);
 	}
 
 	private void OnSelectedConfigFileCreated(object sender, FileSystemEventArgs e)
 	{
 
 		TeaLog.Info($"SelectedConfigChangeWatcher: Created {e.Name}");
-
-		UpdateConfig(e.FullPath, e.Name);
+		
+		if (!e.Name.Equals(Constants.SELECTED_CONFIG_WITH_EXTENSION)) return;
+		configManager.SelectedConfigInstance.Save();
 	}
 
 	private void OnSelectedConfigFileDeleted(object sender, FileSystemEventArgs e)
 	{
 		TeaLog.Info($"SelectedConfigChangeWatcher: Deleted {e.Name}");
+
+		if (!e.Name.Equals(Constants.SELECTED_CONFIG_WITH_EXTENSION)) return;
+		configManager.SelectedConfigInstance.Save();
 	}
 
 	private void OnSelectedConfigFileRenamed(object sender, RenamedEventArgs e)
 	{
 		TeaLog.Info($"SelectedConfigChangeWatcher: Renamed {e.OldName} to {e.Name}");
 
-		configManager.Configs.Remove(e.OldName);
-
-		//UpdateConfig(e.FullPath, e.Name);
+		if (!e.OldName.Equals(Constants.SELECTED_CONFIG_WITH_EXTENSION)) return;
+		configManager.SelectedConfigInstance.Save();
 	}
 
 	private void OnSelectedConfigFileError(object sender, ErrorEventArgs e)
@@ -74,16 +77,21 @@ public class SelectedConfigWatcher : SingletonAccessor
 		TeaLog.Info(e.GetException().ToString());
 	}
 
-	private void UpdateConfig(string filePathName, string fileName)
+	private void UpdateConfig(string fileName)
 	{
-		if (!fileName.Equals(Watcher.Filter)) return;
+		if (!fileName.Equals(Constants.SELECTED_CONFIG_WITH_EXTENSION)) return;
 
 		DateTime currentEventTime = DateTime.Now;
-		if ((currentEventTime - LastEventTime).Seconds < 1) return;
+		if ((currentEventTime - LastEventTime).TotalSeconds < 1) return;
+
 		LastEventTime = currentEventTime;
 
-		//_ = configManager.LoadConfig(filePathName);
-		Timers.SetTimeout(() => _ = configManager.LoadSelectedConfig(), 250);
+		Timers.SetTimeout(() => configManager.LoadSelectedConfig(), 250);
+	}
+
+	public void TemporarilyDisable()
+	{
+		LastEventTime = DateTime.Now;
 	}
 
 	public override string ToString()

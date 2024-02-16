@@ -1,16 +1,19 @@
 ﻿using Iced.Intel;
 using ImGuiNET;
+using SharpPluginLoader.Core.Configuration;
 using SharpPluginLoader.Core.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace MHWTeaOverlay;
 
-public class ConfigManager
+public class ConfigManager : SingletonAccessor
 {
 	// Singleton Pattern
 	private static readonly ConfigManager singleton = new();
@@ -22,56 +25,86 @@ public class ConfigManager
 	static ConfigManager() { }
 
 	// Singleton Pattern End
-	private ConfigWatcher ConfigWatcherInstance { get; set; }
+	public ConfigWatcher ConfigWatcherInstance { get; set; }
 
-	private SelectedConfigWatcher SelectedConfigWatcherInstance { get; set; }
+	public SelectedConfigWatcher SelectedConfigWatcherInstance { get; set; }
 
 	public Dictionary<string, Config> Configs { get; set; } = new();
+
+	public ConfigCustomization Customization { get; set; }
+
 	public Config Default { get; set; }
 	public Config Current { get; set; }
 
 	public SelectedConfigClass SelectedConfigInstance { get; set; }
 
-	private ConfigManager() { }
+	private ConfigManager()
+	{
+		
+	}
 
-	public async void Init()
+	public ConfigManager Init()
 	{
 		TeaLog.Info("ConfigManager: Initializing...");
 
-		Default = await new Config().Init();
-		//SetCurrentConfig(Default);
-
-		await LoadAllConfigs();
-		await LoadSelectedConfig();
-
+		Customization = new();
 		ConfigWatcherInstance = new();
 		SelectedConfigWatcherInstance = new();
 
+		Default = new Config().Init();
+		//SetCurrentConfig(Default);
+
+		LoadAllConfigs();
+		LoadSelectedConfig();
 
 		TeaLog.Info("ConfigManager: Done!");
+
+		return this;
 	}
 
-	public void SetCurrentConfig(Config config)
+	public ConfigManager SetCurrentConfig(Config config)
 	{
 		Current = config;
 		SelectedConfigInstance.SelectedConfig = config.Name;
-		_ = SelectedConfigInstance.Save();
+		SelectedConfigInstance.Save();
+		Customization.SetCurrentConfig(config.Name);
+
+		return this;
 	}
 
-	public async Task LoadAllConfigs()
+	public ConfigManager LoadAllConfigs()
 	{
-
 		TeaLog.Info("ConfigManager: Loading All Configs...");
 
 		Configs = new();
+		var configNamesList = new List<string>();
+		var isDefaultConfigFromFile = false;
 
 		foreach (var localalizationFileNamePath in Directory.EnumerateFiles(Constants.CONFIGS_PATH, "*.json"))
 		{
-			await LoadConfig(localalizationFileNamePath);
+			var configName = LoadConfig(localalizationFileNamePath);
+			if (configName == null) continue;
+
+			configNamesList.Add(configName);
+
+			if(configName.Equals(Constants.DEFAULT_CONFIG))
+			{
+				isDefaultConfigFromFile = true;
+			}
 		}
+
+		if (!isDefaultConfigFromFile)
+		{
+			NewConfig(Constants.DEFAULT_CONFIG);
+		}
+
+		Customization.ConfigNamesList = configNamesList;
+		Customization.UpdateNamesList();
+
+		return this;
 	}
 
-	public async Task LoadConfig(string configFileNamePath)
+	public string LoadConfig(string configFileNamePath)
 	{
 		try
 		{
@@ -79,49 +112,134 @@ public class ConfigManager
 
 			TeaLog.Info($"Config {configName}: Loading...");
 
-			var json = await JsonManager.ReadFromFile(configFileNamePath);
+			var json = JsonManager.ReadFromFile(configFileNamePath);
 
-			var config = await JsonSerializer.Deserialize<Config>(json, JsonManager.JsonSerializerOptionsInstance).Init(configName);
+			Configs[configName] = JsonSerializer.Deserialize<Config>(json, JsonManager.JsonSerializerOptionsInstance).Init(configName).Save();
 
-			Configs[configName] = config;
+			Customization.AddConfig(configName);
 
-			//if(configName.Equals(Current.Name))
-			//{
-			//Current = config;
-			//}
+			return configName;
 		}
 		catch (Exception exception)
 		{
-			TeaLog.Info(exception.ToString());
+			TeaLog.Error(exception.ToString());
+			return null;
 		}
 	}
 
-	public async Task LoadSelectedConfig()
+	public ConfigManager LoadSelectedConfig()
 	{
 		try
 		{
 			TeaLog.Info($"Selected Config File: Loading...");
 
-			var json = await JsonManager.ReadFromFile(Constants.CONFIG_FILE_PATH_NAME);
+			var json = JsonManager.ReadFromFile(Constants.SELECTED_CONFIG_FILE_PATH_NAME);
 
 			var selectedConfig = JsonSerializer.Deserialize<SelectedConfigClass>(json, JsonManager.JsonSerializerOptionsInstance);
 
-			Config newConfig;
+			Config config;
 			
-			var success = Configs.TryGetValue(selectedConfig.SelectedConfig, out newConfig);
+			var success = Configs.TryGetValue(selectedConfig.SelectedConfig, out config);
 
 			if (!success) {
-				await SelectedConfigInstance.Save();
-				return;
+				SelectedConfigInstance.Save();
+				TeaLog.Info($"Selected Config File: Done!");
+				return this;
 			}
 
+			TeaLog.Info($"Selected Config File: Done!");
+
 			SelectedConfigInstance = selectedConfig;
-			SetCurrentConfig(newConfig);
+			SetCurrentConfig(config);
+
+			return this;
 		}
 		catch (Exception exception)
 		{
-			TeaLog.Info(exception.ToString());
+			TeaLog.Error(exception.ToString());
+			return this;
 		}
+	}
+
+	private ConfigManager DuplicateConfig(string name, Config configToDuplicate)
+	{
+		if (name.Length == 0 || Customization.ConfigNamesList.Contains(name))
+		{
+			return this;
+		}
+
+		var newConfig = configToDuplicate.DeepCopy();
+		newConfig.Name = name;
+		newConfig.Save();
+
+		Configs[name] = newConfig;
+		Customization.AddConfig(name);
+
+		SetCurrentConfig(newConfig);
+		return this;
+	}
+
+	public ConfigManager NewConfig(string name)
+	{
+		DuplicateConfig(name.Trim(), Default);
+		return this;
+	}
+
+	public ConfigManager DuplicateConfig(string name)
+	{
+		DuplicateConfig(name.Trim(), Current);
+		return this;
+	}
+
+	public ConfigManager ResetConfig()
+	{
+		var newConfig = Default.DeepCopy();
+		newConfig.Name = Current.Name;
+		newConfig.Save();
+
+		Configs[newConfig.Name] = newConfig;
+		Current = newConfig;
+
+		return this;
+	}
+
+	public ConfigManager DeleteConfig(string fileName)
+	{
+		var configName = Path.GetFileNameWithoutExtension(fileName);
+
+		Config configToDelete;
+
+		var contains = Configs.TryGetValue(fileName, out configToDelete);
+
+		if (!contains) return this;
+
+		Configs.Remove(configName);
+		Customization.DeleteConfig(configName);
+
+		return this;
+	}
+
+	public ConfigManager DeleteConfig()
+	{
+		var configToDelete = Current;
+
+		Configs.Remove(configToDelete.Name);
+		Customization.DeleteConfig(configToDelete.Name);
+
+		Config defaultConfiguredConfig;
+		var success = Configs.TryGetValue(Default.Name, out defaultConfiguredConfig);
+
+		if(!success)
+		{
+			DuplicateConfig(Default.Name, Default);
+			return this;
+		}
+
+		SetCurrentConfig(defaultConfiguredConfig);
+
+		File.Delete($"{Constants.CONFIGS_PATH}{configToDelete.Name}.json");
+
+		return this;
 	}
 
 	public override string ToString()

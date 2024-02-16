@@ -58,6 +58,8 @@ public class ConfigWatcher : SingletonAccessor
 	private void OnConfigFileDeleted(object sender, FileSystemEventArgs e)
 	{
 		TeaLog.Info($"ConfigChangeWatcher: Deleted {e.Name}");
+
+		//configManager.DeleteConfig(e.Name);
 	}
 
 	private void OnConfigFileRenamed(object sender, RenamedEventArgs e)
@@ -79,14 +81,22 @@ public class ConfigWatcher : SingletonAccessor
 		DateTime currentEventTime = DateTime.Now;
 		DateTime lastEventTime;
 
-		var contains = LastEventTimes.TryGetValue(filePathName, out lastEventTime);
+		var contains = LastEventTimes.TryGetValue(fileName, out lastEventTime);
 
-		if (contains && (currentEventTime - lastEventTime).Seconds < 1) return;
+		if (contains && (currentEventTime - lastEventTime).TotalSeconds < 1) return;
 
-		LastEventTimes[filePathName] = currentEventTime;
+		LastEventTimes[fileName] = currentEventTime;
 
-		//_ = configManager.LoadConfig(filePathName);
-		Timers.SetTimeout(() => _ = configManager.LoadConfig(filePathName), 250);
+		Timers.SetTimeout(() =>
+		{
+			var configName = configManager.LoadConfig(filePathName);
+			configManager.Current = configManager.Configs[configName];
+		}, 250);
+	}
+
+	public void TemporarilyDisable(string configName)
+	{
+		LastEventTimes[$"{configName}.json"] = DateTime.Now;
 	}
 
 	public override string ToString()
