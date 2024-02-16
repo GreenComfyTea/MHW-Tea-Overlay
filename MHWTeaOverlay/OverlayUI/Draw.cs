@@ -28,7 +28,6 @@ namespace MHWTeaOverlay
 		// Singleton Pattern End
 
 		private Draw() {
-			foregroundDrawList = ImGui.GetForegroundDrawList();
 		}
 
 		public void OutlineRectangle(Vector2 position, SizeF size, uint color, float thickness)
