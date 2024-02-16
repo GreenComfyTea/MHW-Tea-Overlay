@@ -14,7 +14,7 @@ public interface LocalizedStrings { }
 
 public class LocalizedStrings_LocalizationInfo : LocalizedStrings
 {
-	public string Translator { get; set; } = "GreenComfyTea";
+	public string Translators { get; set; } = "GreenComfyTea";
 }
 
 public class LocalizedStrings_UI : LocalizedStrings
@@ -24,9 +24,20 @@ public class LocalizedStrings_UI : LocalizedStrings
 
 public class LocalizedStrings_ImGui : LocalizedStrings
 {
+	// Mod Info
+	public string MadeBy { get; set; } = "Made by:";
+	public string NexusMods { get; set; } = "Nexus Mods";
+	public string GitHubRepo { get; set; } = "GitHub Repo";
+	public string Twitch { get; set; } = "Twitch";
+	public string Twitter { get; set; } = "Twitter";
+	public string ArtStation { get; set; } = "ArtStation";
+	public string DonationMessage1 { get; set; } = "If you like the mod, please consider making a small donation!";
+	public string DonationMessage2 { get; set; } = "It would help me maintain existing mods and create new ones in the future!";
+	public string Donate { get; set; } = "Donate";
+	public string PayPal { get; set; } = "PayPal";
+	public string BuyMeATea { get; set; } = "Buy Me a Tea";
 
 	// Config
-
 	public string Config { get; set; } = "Config";
 
 	public string ConfigName { get; set; } = "Config Name";
@@ -39,6 +50,8 @@ public class LocalizedStrings_ImGui : LocalizedStrings
 	// Language
 
 	public string Language { get; set; } = "Language";
+
+	public string Translators { get; set; } = "Translators:";
 
 	// Bar
 	public string Visible { get; set; } = "Visible";

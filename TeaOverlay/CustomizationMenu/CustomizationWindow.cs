@@ -51,18 +51,41 @@ namespace TeaOverlay
 				//ImGui.GetMainViewport().Size = new Vector2(2880, 1620);
 
 				ImGui.PushFont(font);
-				ImGui.Begin($"{Constants.MOD_NAME}", ref isOpened);
+				ImGui.Begin($"{Constants.MOD_NAME} v{Constants.VERSION}", ref isOpened);
+
+				ImGui.Text(localizationManager.ImGui.MadeBy);
+				ImGui.SameLine();
+				ImGui.TextColored(Constants.MOD_AUTHOR_COLOR, Constants.MOD_AUTHOR);
+
+				if (ImGui.Button(localizationManager.ImGui.NexusMods)) Utils.OpenLink(Constants.NEXUSMODS_LINK);
+				ImGui.SameLine();
+				if (ImGui.Button(localizationManager.ImGui.GitHubRepo)) Utils.OpenLink(Constants.GITHUB_REPO_LINK);
+
+				if (ImGui.Button(localizationManager.ImGui.Twitch)) Utils.OpenLink(Constants.TWITCH_LINK);
+				ImGui.SameLine();
+				if (ImGui.Button(localizationManager.ImGui.Twitter)) Utils.OpenLink(Constants.TWITTER_LINK);
+				ImGui.SameLine();
+				if (ImGui.Button(localizationManager.ImGui.ArtStation)) Utils.OpenLink(Constants.ARTSTATION_LINK);
+
+				ImGui.Text(localizationManager.ImGui.DonationMessage1);
+				ImGui.Text(localizationManager.ImGui.DonationMessage2);
+
+				if (ImGui.Button(localizationManager.ImGui.Donate)) Utils.OpenLink(Constants.STREAMELEMENTS_TIP_LINK);
+				ImGui.SameLine();
+				if (ImGui.Button(localizationManager.ImGui.PayPal)) Utils.OpenLink(Constants.PAYPAL_LINK);
+				ImGui.SameLine();
+				if (ImGui.Button(localizationManager.ImGui.BuyMeATea)) Utils.OpenLink(Constants.KOFI_LINK);
+
+				ImGui.Separator();
+				ImGui.NewLine();
+				ImGui.Separator();
 
 				bar.Position = new Vector2(1200f, 100f);
 				bar.Draw();
 
-				//draw.FilledRectangle(0f, 0f, 5000f, 5000f, 0x800000FF);
-
 				configManager.Customization.RenderImGui();
 				changed = localizationManager.Customization.RenderImGui() || changed;
 
-				ImGui.Text($"Language: {configManager.Current.Language}");
-				ImGui.Text($"Translator: {localizationManager.Current.LocalizationInfo.Translator}");
 				changed = bar.Customization.RenderImGui() || changed;
 
 				//ImGui.Text($"WorkSize: {ImGui.GetMainViewport().WorkSize}");
