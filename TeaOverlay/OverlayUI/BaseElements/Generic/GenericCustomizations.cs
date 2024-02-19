@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class OffsetCustomization : SingletonAccessor
+internal class OffsetCustomization : SingletonAccessor
 {
 	[JsonIgnore]
 	private float x = 0f;
@@ -18,6 +18,14 @@ public class OffsetCustomization : SingletonAccessor
 	[JsonIgnore]
 	private float y = 0f;
 	public float Y { get => y; set => y = value; }
+
+	public OffsetCustomization() { }
+
+	public OffsetCustomization(float x, float y)
+	{
+		X = x;
+		Y = y;
+	}
 
 	public bool RenderImGui()
 	{
@@ -38,7 +46,7 @@ public class OffsetCustomization : SingletonAccessor
 	}
 }
 
-public class SizeCustomization : SingletonAccessor
+internal class SizeCustomization : SingletonAccessor
 {
 	[JsonIgnore]
 	private float width = 200f;

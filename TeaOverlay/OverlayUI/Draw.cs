@@ -6,10 +6,11 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TeaOverlay
 {
-	public class Draw
+	internal class Draw
 	{
 		// Draw List uses int color in ABGR format
 		// ImGui uses Vector4 color in RGBA format
@@ -23,45 +24,29 @@ namespace TeaOverlay
 		// not to mark type as beforefieldinit
 		static Draw() { }
 
-		private ImDrawListPtr foregroundDrawList;
+		private ImDrawListPtr backgroundDrawList;
 
 		// Singleton Pattern End
 
 		private Draw() {
 		}
 
-		public void OutlineRectangle(Vector2 position, SizeF size, uint color, float thickness)
+		public void OutlineRectangle(Vector2 position, Vector2 positionBottomRight, uint color, float thickness)
 		{
-			foregroundDrawList = ImGui.GetForegroundDrawList();
-
-			foregroundDrawList.AddRect(position, position + size.ToVector2(), color, 0f, 0x0, thickness);
+			backgroundDrawList = ImGui.GetBackgroundDrawList();
+			backgroundDrawList.AddRect(position, positionBottomRight, color, 0f, 0x0, thickness);
 		}
 
-		public void OutlineRectangle(float x, float y, float width, float height, uint color, float thickness)
+		public void FilledRectangle(Vector2 position, Vector2 positionBottomRight, uint color)
 		{
-			foregroundDrawList = ImGui.GetForegroundDrawList();
-
-			var position = new Vector2(x, y);
-			var size = new Vector2(width, height);
-
-			foregroundDrawList.AddRect(position, position + size, color, 0f, 0x0, thickness);
+			backgroundDrawList = ImGui.GetBackgroundDrawList();
+			backgroundDrawList.AddRectFilled(position, positionBottomRight, color, 0f);
 		}
 
-		public void FilledRectangle(Vector2 position, SizeF size, uint color)
+		public void Text(string text, float fontSize, Vector2 position, uint color)
 		{
-			foregroundDrawList = ImGui.GetForegroundDrawList();
-
-			foregroundDrawList.AddRectFilled(position, position + size.ToVector2(), color, 0f);
-		}
-
-		public void FilledRectangle(float x, float y, float width, float height, uint color)
-		{
-			foregroundDrawList = ImGui.GetForegroundDrawList();
-
-			var position = new Vector2(x, y);
-			var size = new Vector2(width, height);
-
-			foregroundDrawList.AddRectFilled(position, position + size, color, 0f);
+			backgroundDrawList = ImGui.GetBackgroundDrawList();
+			backgroundDrawList.AddText(ImGui.GetFont(), fontSize, position, color, text);
 		}
 	}
 }
