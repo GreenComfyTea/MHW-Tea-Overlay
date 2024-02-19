@@ -7,22 +7,23 @@ using System.Numerics;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Windows.UI.Text;
 
 namespace TeaOverlay;
 
 public interface LocalizedStrings { }
 
-public class LocalizedStrings_LocalizationInfo : LocalizedStrings
+internal class LocalizedStrings_LocalizationInfo : LocalizedStrings
 {
 	public string Translators { get; set; } = "GreenComfyTea";
 }
 
-public class LocalizedStrings_UI : LocalizedStrings
+internal class LocalizedStrings_UI : LocalizedStrings
 {
 	public string UI { get; set; } = "UI";
 }
 
-public class LocalizedStrings_ImGui : LocalizedStrings
+internal class LocalizedStrings_ImGui : LocalizedStrings
 {
 	// Mod Info
 	public string MadeBy { get; set; } = "Made by:";
@@ -82,6 +83,13 @@ public class LocalizedStrings_ImGui : LocalizedStrings
 	public string Colors { get; set; } = "Colors";
 	public string Fill { get; set; } = "Fill";
 	public string Background { get; set; } = "Background";
+
+	// Label
+	public string RightAlignmentShift { get; set; } = "Right Alignment Shift";
+	public string Color { get; set; } = "Color";
+	public string Shadow { get; set; } = "Shadow";
+
+	public string Font { get; set; } = "Font";
 
 
 	[JsonIgnore]
