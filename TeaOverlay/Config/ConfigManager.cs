@@ -13,7 +13,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class ConfigManager : SingletonAccessor
+internal class ConfigManager : SingletonAccessor
 {
 	// Singleton Pattern
 	private static readonly ConfigManager singleton = new();

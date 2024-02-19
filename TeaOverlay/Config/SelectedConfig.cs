@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class SelectedConfigClass : SingletonAccessor
+internal class SelectedConfigClass : SingletonAccessor
 {
 	public string SelectedConfig { get; set; } = "default";
 

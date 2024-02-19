@@ -1,13 +1,18 @@
 ﻿using SharpPluginLoader.Core;
 using ImGuiNET;
 using System.Diagnostics;
+using SharpPluginLoader.Core.Memory;
 
 namespace TeaOverlay;
 
-public class TeaOverlayPlugin : IPlugin
+internal class TeaOverlayPlugin : IPlugin
 {
-	public static string Version => "v1.0";
-	public string Name => "MH:World Tea Overlay " + Version;
+	private delegate void StartRequestDelegate(nint mtNetRequestPointer);
+	private Hook<StartRequestDelegate> _startRequestDelegate;
+
+	public string Name => $"{Constants.MOD_NAME} v{Constants.VERSION}";
+
+	public string Author => Constants.MOD_AUTHOR;
 
 	public PluginData Initialize()
 	{
@@ -37,9 +42,24 @@ public class TeaOverlayPlugin : IPlugin
 		}
 	}
 
+	public static ImFontPtr font;
+
 	public void OnLoad()
 	{
 		_ = Init();
+
+		//_startRequestDelegate = Hook.Create<StartRequestDelegate>(0x1421e2430, (mtNetRequestPointer) =>
+		//{
+		//var mtNetRequestMtObject = new MtObject(mtNetRequestPointer);
+		//Log.Info($"{mtNetRequestMtObject.ToString()}: startRequest");
+
+		//_startRequestDelegate.Original(mtNetRequestPointer);
+		//});
+
+
+		
+
+		//ImGui.PushFont(font);
 	}
 
 	public void OnImGuiRender()

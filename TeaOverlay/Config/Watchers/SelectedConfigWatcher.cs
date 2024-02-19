@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class SelectedConfigWatcher : SingletonAccessor
+internal class SelectedConfigWatcher : SingletonAccessor
 {
     private DateTime LastEventTime = DateTime.Now;
 

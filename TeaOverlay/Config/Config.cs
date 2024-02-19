@@ -16,7 +16,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class Config : SingletonAccessor
+internal class Config : SingletonAccessor
 {
 	[JsonIgnore]
 	public string Name { get; set; } = "";

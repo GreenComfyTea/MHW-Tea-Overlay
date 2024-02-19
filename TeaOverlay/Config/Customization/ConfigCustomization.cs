@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class ConfigCustomization : SingletonAccessor
+internal class ConfigCustomization : SingletonAccessor
 {
     public List<string> ConfigNamesList { get; set; } = new();
 

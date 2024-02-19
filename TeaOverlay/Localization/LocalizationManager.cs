@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class LocalizationManager
+internal class LocalizationManager
 {
 	// Singleton Pattern
 	private static readonly LocalizationManager singleton = new();

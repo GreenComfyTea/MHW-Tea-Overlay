@@ -12,17 +12,17 @@ namespace TeaOverlay;
 
 public interface ConfigModule { }
 
-public class ConfigModule_ConfigInfo : ConfigModule
+internal class ConfigModule_ConfigInfo : ConfigModule
 {
 	public string Translator { get; set; } = "GreenComfyTea";
 }
 
-public class ConfigModule_UI : ConfigModule
+internal class ConfigModule_UI : ConfigModule
 {
 	public string UI { get; set; } = "UI";
 }
 
-public class ConfigModule_ImGui : ConfigModule
+internal class ConfigModule_ImGui : ConfigModule
 {
 	public string Visible { get; set; } = "Visible";
 	public string Settings { get; set; } = "Settings";

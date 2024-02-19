@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class SingletonAccessor
+internal class SingletonAccessor
 {
 	[JsonIgnore]
 	protected readonly LocalizationManager localizationManager = LocalizationManager.Instance;

@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class LocalizationWatcher : SingletonAccessor
+internal class LocalizationWatcher : SingletonAccessor
 {
 	private Dictionary<string, DateTime> LastEventTimes = new();
 

@@ -1,9 +1,12 @@
 ﻿using ImGuiNET;
 using SharpPluginLoader.Core;
 using SharpPluginLoader.Core.Configuration;
+using SharpPluginLoader.Core.Memory;
+using SharpPluginLoader.Core.View;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -13,7 +16,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace TeaOverlay
 {
 
-	public class CustomizationWindow : SingletonAccessor
+	internal class CustomizationWindow : SingletonAccessor
 	{
 		// Singleton Pattern
 		private static readonly CustomizationWindow singleton = new();
@@ -30,6 +33,7 @@ namespace TeaOverlay
 		public bool IsOpened { get => isOpened; set => isOpened = value; }
 
 		private Bar bar = new();
+		private Label label = new();
 
 		private CustomizationWindow() { }
 
@@ -45,13 +49,22 @@ namespace TeaOverlay
 			{
 				var changed = false;
 
-				//var color = new Vector4(0.1f, 0.2f, 0.3f, 0.4f);
-
-				//ImGui.GetMainViewport().WorkSize = new Vector2(2880, 1620);
-				//ImGui.GetMainViewport().Size = new Vector2(2880, 1620);
+				//ImGui.GetMainViewport().WorkSize = new Vector2(2880f, 1620f);
+				//ImGui.GetMainViewport().Size = new Vector2(2880f, 1620f);
 
 				ImGui.PushFont(font);
 				ImGui.Begin($"{Constants.MOD_NAME} v{Constants.VERSION}", ref isOpened);
+
+				ImGui.ShowMetricsWindow();
+
+				//var io = ImGui.GetIO();
+				//var drawData = ImGui.GetDrawData();
+				//var mainViewport = ImGui.GetMainViewport();
+
+				//var fbHeight = io.DisplaySize.Y * io.DisplayFramebufferScale.Y;
+				//var fbWidth = io.DisplaySize.X * io.DisplayFramebufferScale.X;
+
+
 
 				ImGui.Text(localizationManager.ImGui.MadeBy);
 				ImGui.SameLine();
@@ -83,14 +96,23 @@ namespace TeaOverlay
 				bar.Position = new Vector2(1200f, 100f);
 				bar.Draw();
 
+				label.Position = new Vector2(1000f, 50f);
+				label.Text = "Test Label";
+				label.Draw();
+
 				configManager.Customization.RenderImGui();
 				changed = localizationManager.Customization.RenderImGui() || changed;
 
 				changed = bar.Customization.RenderImGui() || changed;
+				changed = label.Customization.RenderImGui() || changed;
+
+				//draw.FilledRectangle(new Vector2(0, 0), new SizeF(5000, 5000), 0xAA0000FF);
 
 				//ImGui.Text($"WorkSize: {ImGui.GetMainViewport().WorkSize}");
 				//ImGui.Text($"DpiScale: {ImGui.GetMainViewport().DpiScale}");
 				//ImGui.Text($"Size: {ImGui.GetMainViewport().Size}");
+				//ImGui.Text($"IO.DisplaySize: {ImGui.GetIO().DisplaySize}");
+				//ImGui.Text($"IO.DisplayFramebufferScale: {ImGui.GetIO().DisplayFramebufferScale}");
 
 				font.Scale = oldScale;
 				ImGui.PopFont();

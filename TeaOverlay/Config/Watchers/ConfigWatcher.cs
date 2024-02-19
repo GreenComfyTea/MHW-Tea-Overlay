@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay;
 
-public class ConfigWatcher : SingletonAccessor
+internal class ConfigWatcher : SingletonAccessor
 {
     private Dictionary<string, DateTime> LastEventTimes = new();
 

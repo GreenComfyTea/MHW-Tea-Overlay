@@ -14,7 +14,7 @@ using System.Xml.Linq;
 
 namespace TeaOverlay
 {
-	public class Localization : SingletonAccessor
+	internal class Localization : SingletonAccessor
 	{
 		[JsonIgnore]
 		public string Name { get; set; } = "";

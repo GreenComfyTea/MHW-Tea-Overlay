@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class LocalizationCustomization : SingletonAccessor
+internal class LocalizationCustomization : SingletonAccessor
 {
 	public List<string> LocalizationNamesList { get; set; } = new();
 
