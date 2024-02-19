@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class BarColorsCustomization : SingletonAccessor
+internal class BarColorsCustomization : SingletonAccessor
 {
 	// Colors
 
@@ -153,13 +153,13 @@ public class BarColorsCustomization : SingletonAccessor
 	public async Task OnFillColorChanged()
 	{
 		ColorUtils.UpdateColorsFromRgbaVector(fillColorImGuiRgba, ref fillColorRgbaString, ref fillColorDrawAbgr,
-			ref outlineColorRed, ref outlineColorGreen, ref outlineColorBlue, ref outlineColorAlpha);
+			ref fillColorRed, ref fillColorGreen, ref fillColorBlue, ref fillColorAlpha);
 	}
 
 	public async Task OnBackgroundColorChanged()
 	{
 		ColorUtils.UpdateColorsFromRgbaVector(backgroundColorImGuiRgba, ref backgroundColorRgbaString, ref backgroundColorDrawAbgr,
-			ref outlineColorRed, ref outlineColorGreen, ref outlineColorBlue, ref outlineColorAlpha);
+			ref backgroundColorRed, ref backgroundColorGreen, ref backgroundColorBlue, ref backgroundColorAlpha);
 	}
 
 	public async Task OnOutlineColorChanged()
@@ -180,7 +180,6 @@ public class BarColorsCustomization : SingletonAccessor
 				tempChanged = ImGui.ColorPicker4("", ref fillColorImGuiRgba);
 				if (tempChanged) _ = OnFillColorChanged();
 
-
 				changed = changed || tempChanged;
 
 				ImGui.TreePop();
@@ -191,7 +190,6 @@ public class BarColorsCustomization : SingletonAccessor
 				tempChanged = ImGui.ColorPicker4("", ref backgroundColorImGuiRgba);
 				if (tempChanged) _ = OnBackgroundColorChanged();
 
-
 				changed = changed || tempChanged;
 
 				ImGui.TreePop();
@@ -201,7 +199,6 @@ public class BarColorsCustomization : SingletonAccessor
 			{
 				tempChanged = ImGui.ColorPicker4("", ref outlineColorImGuiRgba);
 				if (tempChanged) _ = OnOutlineColorChanged();
-
 
 				changed = changed || tempChanged;
 

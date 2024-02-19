@@ -15,7 +15,7 @@ using Windows.UI.Core;
 
 namespace TeaOverlay;
 
-public class Bar : SingletonAccessor
+internal class Bar : SingletonAccessor
 {
 	public BarCustomization Customization { get; set; }
 
@@ -97,19 +97,17 @@ public class Bar : SingletonAccessor
 
 		var outline = Customization.Outline;
 
-		var customizationInternal = Customization.Internal;
-
 		// Background
 		draw.FilledRectangle(
-			Internal.BackgroundPositionX, Internal.BackgroundPositionY,
-			Internal.BackgroundWidth, Internal.BackgroundHeight,
+			Internal.BackgroundPosition,
+			Internal.BackgroundPositionBottomRight,
 			Internal.BackgroundColorDrawAbgr
 		);
 
 		// Fill
 		draw.FilledRectangle(
-			Internal.FillPositionX, Internal.FillPositionY,
-			Internal.FillWidth, Internal.FillHeight,
+			Internal.FillPosition,
+			Internal.FillPositionBottomRight,
 			Internal.FillColorDrawAbgr
 		);
 
@@ -120,8 +118,8 @@ public class Bar : SingletonAccessor
 		}
 
 		draw.OutlineRectangle(
-			Internal.OutlinePositionX, Internal.OutlinePositionY,
-			customizationInternal.OutlineWidth, customizationInternal.OutlineHeight,
+			Internal.OutlinePosition,
+			Internal.OutlinePositionBottomRight,
 			Internal.OutlineColorDrawAbgr,
 			outline.Thickness
 		);

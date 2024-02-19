@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class BarSettingsCustomization : SingletonAccessor
+internal class BarSettingsCustomization : SingletonAccessor
 {
 
     public string FillDirection { get; set; }

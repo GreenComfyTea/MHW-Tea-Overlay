@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class BarOutlineCustomization : SingletonAccessor
+internal class BarOutlineCustomization : SingletonAccessor
 {
     [JsonIgnore]
     private bool visibility = true;

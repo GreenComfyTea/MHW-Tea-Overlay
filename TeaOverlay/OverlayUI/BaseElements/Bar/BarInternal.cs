@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class BarInternal
+internal class BarInternal
 {
 	private Bar BarInstance {  get; }
 
@@ -24,14 +24,14 @@ public class BarInternal
 	public float BackgroundShiftX { get; set; } = 0f;
 	public float BackgroundShiftY { get; set; } = 0f;
 
-	public float FillPositionX { get; set; } = 0f;
-	public float FillPositionY { get; set; } = 0f;
+	public Vector2 FillPosition { get; set; } = Vector2.Zero;
+	public Vector2 FillPositionBottomRight { get; set; } = Vector2.Zero;
 
-	public float BackgroundPositionX { get; set; } = 0f;
-	public float BackgroundPositionY { get; set; } = 0f;
+	public Vector2 BackgroundPosition { get; set; } = Vector2.Zero;
+	public Vector2 BackgroundPositionBottomRight { get; set; } = Vector2.Zero;
 
-	public float OutlinePositionX { get; set; } = 0f;
-	public float OutlinePositionY { get; set; } = 0f;
+	public Vector2 OutlinePosition { get; set; } = Vector2.Zero;
+	public Vector2 OutlinePositionBottomRight { get; set; } = Vector2.Zero;
 
 	public uint FillColorDrawAbgr { get; set; } = 0;
 	public uint BackgroundColorDrawAbgr { get; set; } = 0;
@@ -116,21 +116,26 @@ public class BarInternal
 		{
 			case OutlineModes.Inside:
 
-				OutlinePositionX = position.X + customizationInternal.ActualOutlinePositionOffsetX;
-				OutlinePositionY = position.Y + customizationInternal.ActualOutlinePositionOffsetY;
+				OutlinePosition = new(
+					position.X + customizationInternal.ActualOutlinePositionOffsetX,
+					position.Y + customizationInternal.ActualOutlinePositionOffsetY
+				);
 
-				positionX = OutlinePositionX + customizationInternal.ActualPositionOffsetX;
-				positionY = OutlinePositionY + customizationInternal.ActualPositionOffsetY;
+				positionX = OutlinePosition.X + customizationInternal.ActualPositionOffsetX;
+				positionY = OutlinePosition.Y + customizationInternal.ActualPositionOffsetY;
 
 				break;
 
 			case OutlineModes.Center:
 
-				OutlinePositionX = position.X + customizationInternal.ActualOutlinePositionOffsetX;
-				OutlinePositionY = position.Y + customizationInternal.ActualOutlinePositionOffsetY;
+				OutlinePosition = new(
+					position.X + customizationInternal.ActualOutlinePositionOffsetX,
+					position.Y + customizationInternal.ActualOutlinePositionOffsetY
+				);
 
-				positionX = OutlinePositionX + customizationInternal.ActualPositionOffsetX;
-				positionY = OutlinePositionY + customizationInternal.ActualPositionOffsetY;
+
+				positionX = OutlinePosition.X + customizationInternal.ActualPositionOffsetX;
+				positionY = OutlinePosition.Y + customizationInternal.ActualPositionOffsetY;
 
 				break;
 
@@ -140,17 +145,38 @@ public class BarInternal
 				positionX = position.X + customizationInternal.ActualPositionOffsetX;
 				positionY = position.Y + customizationInternal.ActualPositionOffsetY;
 
-				OutlinePositionX = positionX - customizationInternal.ActualOutlinePositionOffsetX;
-				OutlinePositionY = positionY - customizationInternal.ActualOutlinePositionOffsetY;
+				OutlinePosition = new(
+					positionX - customizationInternal.ActualOutlinePositionOffsetX,
+					positionY - customizationInternal.ActualOutlinePositionOffsetY
+				);
 
 				break;
 		}
 
-		FillPositionX = positionX + FillShiftX;
-		FillPositionY = positionY + FillShiftY;
+		FillPosition = new(
+			positionX + FillShiftX,
+			positionY + FillShiftY
+		);
 
-		BackgroundPositionX = positionX + BackgroundShiftX;
-		BackgroundPositionY = positionY + BackgroundShiftY;
+		BackgroundPosition = new(
+			positionX + BackgroundShiftX,
+			positionY + BackgroundShiftY
+		);
+
+		FillPositionBottomRight = new(
+			FillPosition.X + FillWidth,
+			FillPosition.Y + FillHeight
+		);
+
+		BackgroundPositionBottomRight = new(
+			BackgroundPosition.X + BackgroundWidth,
+			BackgroundPosition.Y + BackgroundHeight
+		);
+
+		OutlinePositionBottomRight = new(
+			OutlinePosition.X + customizationInternal.OutlineWidth,
+			OutlinePosition.Y + customizationInternal.OutlineHeight
+		);
 
 		return this;
 	}

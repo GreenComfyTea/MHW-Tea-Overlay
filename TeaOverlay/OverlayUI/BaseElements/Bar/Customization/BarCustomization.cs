@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TeaOverlay;
 
-public class BarCustomization : SingletonAccessor
+internal class BarCustomization : SingletonAccessor
 {
 	[JsonIgnore]
 	private bool visibility = true;
